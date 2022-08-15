@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
-import yelp from "../api/yelp";
 
 import SearchBar from "../components/SearchBar";
+import ResultsList from "../components/ResultsList";
+
 import useResults from "../hooks/useResults";
 
 const SearchScreen = () => {
   const [term, setTerm] = useState("");
   const [searchApi, results, errorMessage] = useResults();
+
+  const filterResultsByPrice = (price) => {
+    return results.filter((result) => {
+      return result.price === price;
+    });
+  };
 
   return (
     <View>
@@ -18,6 +25,13 @@ const SearchScreen = () => {
       />
       {errorMessage ? <Text>{errorMessage}</Text> : null}
       <Text>we have found {results.length} results</Text>
+      <ResultsList title="Cheap Eats" results={filterResultsByPrice("$")} />
+      <ResultsList title="Bit Pricier" results={filterResultsByPrice("$$")} />
+      <ResultsList
+        title="More Expensive"
+        results={filterResultsByPrice("$$$")}
+      />
+      <ResultsList title="Fine Dining" results={filterResultsByPrice("$$$$")} />
     </View>
   );
 };
